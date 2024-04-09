@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-import json
+
 
 
 
@@ -17,7 +17,7 @@ headers = {
 }
 
 users_data = requests.request("GET", url_user, headers=headers, data=payload)
-# print(users_data)
+# print(users_data[0]["meta_data"])
 total_pages = int(users_data.headers['X-WP-TotalPages'])
 # print(total_pages)
 users_data_total_list = []
@@ -35,11 +35,7 @@ merge_total_user_data = []
 for item in users_data_total_list :
     merge_total_user_data += item
     
-
 # print(merge_total_user_data)
-
-
-
 
 #response from list of all orders api
 url_orders = "https://emersun.com//wp-json/wc/v3/orders?status=completed&page=1&per_page=100&orderby=date&consumer_key="+ customer_key +"&consumer_secret=" + customer_secret
@@ -51,15 +47,12 @@ headers = {
 }
 
 response_all_orders = requests.request("GET", url_orders, headers=headers, data=payload)
-# total_pages = int(response_all_orders.headers['X-WP-TotalPages'])
-# print(total_pages)
-# print(response.text)
 
-# mainDf = pd.read_excel(r'./users.xlsx')
-# phones = mainDf['phone']
-# for phone in phones:
-#   for user_data in users_data:
-#     user_phone = user_data["username"]
-#     if int(phone) == int(user_phone) :
-#       print(phone)
-    
+
+mainDf = pd.read_excel(r'./users.xlsx')
+phones = mainDf['phone']
+for phone in phones:
+  for user_data in merge_total_user_data:
+    user_phone = user_data["username"]
+    if int(phone) == int(user_phone) :
+      print('ok')
