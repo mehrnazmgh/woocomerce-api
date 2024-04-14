@@ -2,6 +2,11 @@ import requests
 import pandas as pd
 
 
+def get_value_by_key(data, key):
+    for item in data:
+        if item['key'] == key:
+            return item['value']
+    return None
 
 
 customer_key = 'ck_2c4c25a0514d3d5127c193ce4200edf25297e227'
@@ -16,8 +21,10 @@ headers = {
   'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
 }
 
-users_data = requests.request("GET", url_user, headers=headers, data=payload)
+users_data = requests.request("GET", url_user, headers=headers, data=payload).json()
 # print(users_data[0]["meta_data"])
+
+
 total_pages = int(users_data.headers['X-WP-TotalPages'])
 # print(total_pages)
 users_data_total_list = []
@@ -30,10 +37,11 @@ for page in range(1,total_pages + 1):
 
     users_data_total = requests.request("GET", url_user_total , headers=headers, data=payload).json()
     # print(users_data_total)
-    users_data_total_list.append(users_data_total)
-merge_total_user_data = []
-for item in users_data_total_list :
-    merge_total_user_data += item
+    users_data_total_list.extend(users_data_total)
+
+# merge_total_user_data = []
+# for item in users_data_total_list :
+#     merge_total_user_data += item
     
 # print(merge_total_user_data)
 
@@ -51,8 +59,8 @@ response_all_orders = requests.request("GET", url_orders, headers=headers, data=
 
 mainDf = pd.read_excel(r'./users.xlsx')
 phones = mainDf['phone']
-for phone in phones:
-  for user_data in merge_total_user_data:
-    user_phone = user_data["username"]
-    if int(phone) == int(user_phone) :
-      print('ok')
+# for phone in phones:
+#   for user_data in merge_total_user_data.items():
+    # user_phone = user_data["username"]
+    # if int(phone) == int(user_phone) :
+    #   print('ok')
